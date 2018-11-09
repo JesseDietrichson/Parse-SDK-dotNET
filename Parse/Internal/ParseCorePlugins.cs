@@ -2,10 +2,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Parse.Common.Internal;
 using Parse.Core.Internal;
+using StandardStorage;
 
 namespace Parse.Core.Internal
 {
@@ -119,7 +121,8 @@ namespace Parse.Core.Internal
             {
                 lock (mutex)
                 {
-                    return storageController = storageController ?? new StorageController();
+                    var folder = FileSystem.Current.GetFolderFromPathAsync(Path.GetFullPath(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData))).Result;
+                    return storageController = storageController ?? new StorageController(folder.CreateFileAsync("ApplicationSettings", CreationCollisionOption.OpenIfExists).Result);
                 }
             }
             set
